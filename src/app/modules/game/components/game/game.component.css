@@ -1,0 +1,45 @@
+.game-container {
+  text-align: center;
+  transform: translateY(50%);
+}
+.game-container .grid-container {
+  display: inline-block;
+  background-color: #bbada0;
+  padding: 10px;
+  position: relative;
+  text-align: center;
+}
+.game-container .grid-container .grid-row {
+  margin-bottom: 6px;
+}
+.game-container .grid-container .grid-row:last-of-type {
+  margin: 0;
+}
+.game-container .grid-container .grid-row .grid-cell {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  margin-right: 10px;
+  background-color: rgba(238, 228, 218, 0.35);
+}
+.game-container .grid-container .grid-row .grid-cell:last-of-type {
+  margin: 0;
+}
+.game-container .grid-container .item {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 10px;
+  left: 10px;
+  background-color: brown;
+}
+.game-container .grid-container .item .item-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 50px;
+  color: white;
+}
+
+/*# sourceMappingURL=game.component.css.map */
