@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 
 import type { Item } from '../models/item';
 
-type TDim = 'col' | 'row';
+enum EDim {
+  COL = 'col',
+  ROW = 'row',
+}
 
 @Injectable({
   providedIn: 'root',
@@ -33,19 +36,19 @@ export class GameService {
   }
 
   right() {
-    this.move('row', 'col', true);
+    this.move(EDim.ROW, EDim.COL, true);
   }
 
   left() {
-    this.move('row', 'col');
+    this.move(EDim.ROW, EDim.COL);
   }
 
   up() {
-    this.move('col', 'row');
+    this.move(EDim.COL, EDim.ROW);
   }
 
   down() {
-    this.move('col', 'row', true);
+    this.move(EDim.COL, EDim.ROW, true);
   }
 
   resetGame() {
@@ -55,7 +58,7 @@ export class GameService {
     this.generateItems();
   }
 
-  private move(dimX: TDim, dimY: TDim, reverse = false) {
+  private move(dimX: EDim, dimY: EDim, reverse = false) {
     if (this.isEnd || !this.checkMove(dimX, false, reverse)) {
       return;
     }
@@ -111,10 +114,10 @@ export class GameService {
   }
 
   private endGames() {
-    return !this.checkMove('row') || !this.checkMove('col');
+    return !this.checkMove(EDim.ROW) || !this.checkMove(EDim.COL);
   }
 
-  private checkMove(dimX: TDim, skipDir = true, forward = false) {
+  private checkMove(dimX: EDim, skipDir = true, forward = false) {
     const dimY = dimX === 'row' ? 'col' : 'row';
 
     for (let x = 1; x <= this.size; x++) {
