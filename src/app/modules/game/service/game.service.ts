@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
+
 import type { Item } from '../models/item';
+
+type TDim = 'col' | 'row';
 
 @Injectable({
   providedIn: 'root',
@@ -28,32 +31,36 @@ export class GameService {
   }
 
   right() {
-    this.move();
+    this.move('row', 'col', true);
   }
 
   left() {
-    this.move();
+    this.move('row', 'col');
   }
 
   up() {
-    this.move();
+    this.move('col', 'row');
   }
 
   down() {
-    this.move();
+    this.move('col', 'row', true);
   }
 
-  private move() {
+  private move(dimX: TDim, dimY: TDim, reverse = false) {
     this.clearDeletedItems();
 
     const mergedItems: Item[] = [];
 
-    for (let row = 1; row <= this.size; row++) {
+    for (let x = 1; x <= this.size; x++) {
       const rowItems = this.items
-        .filter((item) => item.row === row)
-        .sort((a, b) => a.col - b.col);
+        .filter((item) => item[dimX] === x)
+        .sort((a, b) => a[dimY] - b[dimY]);
 
-      let col = 1;
+      if (reverse) {
+        rowItems.reverse();
+      }
+
+      let y = reverse ? this.size : 1;
       let merged = false;
       let prevItem: Item | null = null;
 
@@ -66,13 +73,17 @@ export class GameService {
           } else if (item.value === prevItem.value) {
             prevItem.isOnDelete = true;
             item.isOnDelete = true;
-            col--;
-            mergedItems.push({ value: item.value * 2, col, row });
+            reverse ? y++ : y--;
+            mergedItems.push({
+              value: item.value * 2,
+              [dimY]: y,
+              [dimX]: x,
+            } as any);
           }
         }
 
-        item.col = col;
-        col++;
+        item[dimY] = y;
+        reverse ? y-- : y++;
         prevItem = item;
       }
     }
