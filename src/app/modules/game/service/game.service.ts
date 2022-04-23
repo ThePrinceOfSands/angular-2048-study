@@ -16,6 +16,7 @@ export class GameService {
   private readonly size = 4;
   private availableCells: number[] = [];
 
+  scores = 0;
   items: Item[] = [];
   isEnd = false;
 
@@ -45,6 +46,13 @@ export class GameService {
 
   down() {
     this.move('col', 'row', true);
+  }
+
+  resetGame() {
+    this.scores = 0;
+    this.items = [];
+    this.isEnd = false;
+    this.generateItems();
   }
 
   private move(dimX: TDim, dimY: TDim, reverse = false) {
@@ -93,6 +101,8 @@ export class GameService {
       }
     }
 
+    this.scores += mergedItems.reduce((acc, item) => acc + item.value, 0);
+
     this.items = [...this.items, ...mergedItems];
 
     this.generateItems();
@@ -101,10 +111,10 @@ export class GameService {
   }
 
   private endGames() {
-    return !(this.checkMove('row') || this.checkMove('col'));
+    return !this.checkMove('row') || !this.checkMove('col');
   }
 
-  private checkMove(dimX: TDim, skipDir = true, forward = true) {
+  private checkMove(dimX: TDim, skipDir = true, forward = false) {
     const dimY = dimX === 'row' ? 'col' : 'row';
 
     for (let x = 1; x <= this.size; x++) {
@@ -137,11 +147,8 @@ export class GameService {
         if (items[i].value === prevValue) {
           return true;
         }
-
         prevValue = items[i].value;
       }
-
-      return true;
     }
 
     return false;
