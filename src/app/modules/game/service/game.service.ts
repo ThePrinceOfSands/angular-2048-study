@@ -17,6 +17,7 @@ export class GameService {
   private availableCells: number[] = [];
 
   items: Item[] = [];
+  isEnd = false;
 
   private get emptyCells(): number[] {
     const notEmptyCells = this.notEmptyCells;
@@ -47,6 +48,10 @@ export class GameService {
   }
 
   private move(dimX: TDim, dimY: TDim, reverse = false) {
+    if (this.isEnd || !this.checkMove(dimX, false, reverse)) {
+      return;
+    }
+
     this.clearDeletedItems();
 
     const mergedItems: Item[] = [];
@@ -91,6 +96,55 @@ export class GameService {
     this.items = [...this.items, ...mergedItems];
 
     this.generateItems();
+
+    this.isEnd = this.endGames();
+  }
+
+  private endGames() {
+    return !(this.checkMove('row') || this.checkMove('col'));
+  }
+
+  private checkMove(dimX: TDim, skipDir = true, forward = true) {
+    const dimY = dimX === 'row' ? 'col' : 'row';
+
+    for (let x = 1; x <= this.size; x++) {
+      const items = this.items
+        .filter((item) => !item.isOnDelete && item[dimX] === x)
+        .sort((a, b) => a[dimY] - b[dimY]);
+
+      if (items.length !== this.size) {
+        if (skipDir) {
+          return true;
+        }
+        const length = items.length;
+        const lockedPositions: number[] = [];
+
+        const start = forward ? this.size + 1 - length : 1;
+        const end = forward ? this.size : length;
+
+        for (let i = start; i <= end; i++) {
+          lockedPositions.push(i);
+        }
+
+        if (items.find((item) => !lockedPositions.includes(item[dimY]))) {
+          return true;
+        }
+      }
+
+      let prevValue = 0;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].value === prevValue) {
+          return true;
+        }
+
+        prevValue = items[i].value;
+      }
+
+      return true;
+    }
+
+    return false;
   }
 
   private clearDeletedItems() {

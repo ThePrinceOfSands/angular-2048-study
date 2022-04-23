@@ -34,5 +34,8 @@
         <div class="item-title">{{ item.value }}</div>
       </div>
     </div>
+    <div *ngIf="gameService.isEnd" class="overlay">
+      <p class="overlay-text">The end</p>
+    </div>
   </div>
 </div>
